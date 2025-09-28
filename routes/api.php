@@ -1,5 +1,5 @@
 <?php
-
+use App\Models\Card;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -11,4 +11,11 @@ Route::post('/echo', function (Request $request) {
         'received' => $request->all(),
         'time' => now()
     ]);
+});
+Route::get('/cards', function () {
+    return Card::all();
+});
+
+Route::get('/cards/{id}', function ($id) {
+    return Card::findOrFail($id);
 });
