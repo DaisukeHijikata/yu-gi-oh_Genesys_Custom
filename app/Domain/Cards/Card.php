@@ -51,4 +51,46 @@ final class Card
     public function isMonster(): bool { return $this->superType === SuperType::Monster; }
     public function isSpell(): bool { return $this->superType === SuperType::Spell; }
     public function isTrap(): bool { return $this->superType === SuperType::Trap; }
+
+    // --- 日本語ラベル（VO/Enumに委譲） ---
+    public function superTypeLabel(): string
+    {
+        return $this->superType->label();
+    }
+    public function monsterKindLabels(): array
+    {
+        return $this->monsterFlags?->labels() ?? [];
+    }
+    public function spellTypeLabel(): ?string
+    {
+        return $this->spellType?->label();
+    }
+    public function trapTypeLabel(): ?string
+    {
+        return $this->trapType?->label();
+    }
+
+    /** API用の素直な配列（英語値＋日本語ラベルを同梱） */
+    public function toApiArray(): array
+    {
+        return [
+            'id'              => $this->id,
+            'name'            => $this->name,
+            'super_type'      => $this->superType->value,
+            'super_type_jp'   => $this->superTypeLabel(),
+            'monster' => $this->isMonster() ? [
+                'flags_bits' => $this->monsterFlags?->bits,
+                'kinds_jp'   => $this->monsterKindLabels(),
+                'stats'      => $this->monsterStats, // そのまま
+            ] : null,
+            'spell_type'      => $this->spellType?->value,
+            'spell_type_jp'   => $this->spellTypeLabel(),
+            'trap_type'       => $this->trapType?->value,
+            'trap_type_jp'    => $this->trapTypeLabel(),
+            'description'     => $this->description,
+            'image_url'       => $this->imageUrl,
+            'created_at'      => $this->createdAt->format(DATE_ATOM),
+            'updated_at'      => $this->updatedAt->format(DATE_ATOM),
+        ];
+    }
 }

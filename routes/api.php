@@ -1,7 +1,6 @@
 <?php
-use App\Models\Card;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\CardController;
 
 Route::get('/ping', function () {
     return response()->json(['ok' => true, 'time' => now()]);
@@ -12,10 +11,5 @@ Route::post('/echo', function (Request $request) {
         'time' => now()
     ]);
 });
-Route::get('/cards', function () {
-    return Card::all();
-});
-
-Route::get('/cards/{id}', function ($id) {
-    return Card::findOrFail($id);
-});
+Route::get('/cards', [CardController::class, 'index']);
+Route::get('/cards/{id}', [CardController::class, 'show'])->whereNumber('id');
